@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "audiobuffer-to-wav": "^1.0.0",
+    "wav": "^1.0.2",
+    "web-audio-beat-detector": "^8.2.3"
+  }
+}
