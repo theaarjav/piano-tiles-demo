@@ -89,15 +89,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  height: 67vh;
   /* height: 55vh; */
-  width: 70vh;
+  width: 67vh;
   border-radius: 50%;
+  border: 2vh solid #4d4d4d40;
   background-color: #00000080;
   backdrop-filter: blur(3px);
 }
 
 .ellipse {
+  display: none;
   position: absolute;
   z-index: 3;
   height: 70vh;
