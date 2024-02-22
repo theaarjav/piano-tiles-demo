@@ -13,7 +13,10 @@ import tunak_tunak from './assets/tunak_tunak.mp3';
 import buffer from './assets/buffer.wav';
 import JaiJaiShivShankar from './assets/Jai_Jai_Shiv_Shankar.mp3';
 import DevaDeva from './assets/Deva_Deva.mp3';
-import chhogada from './assets/chhogada.mp3'
+import chhogada from './assets/chhogada2.mp3'
+import starboy from './assets/starboy.mp3'
+import saki_saki from './assets/saki_saki.mp3'
+import { defaultRows, defaultColumns } from './constants.jsx'
 // import fs from 'fs'
 
 
@@ -22,8 +25,10 @@ function App() {
   const [notes, setNotes] = useState({});
   const [score, setScore] = useState(null);
   const [lives, setLives] = useState(null);
-  const audio = new Audio(sunflower);
-  const tempAudio=new Audio(buffer);
+  const [mouseInside, setMouseInside] = useState(false);
+  const [index, setIndex] = useState(null);
+  const audio = new Audio(starboy);
+  const tempAudio = new Audio(buffer);
   let gameover = false;
   const generateRow = (note) => {
     let row = new Array(4).fill("white");
@@ -36,7 +41,7 @@ function App() {
 
   const songStartHandler = () => {
     tempAudio.pause();
-    tempAudio.currentTime=0;
+    tempAudio.currentTime = 0;
     audio.play();
   }
   const fillRows = () => {
@@ -82,21 +87,17 @@ function App() {
     socket.emit("GAME_START");
   }
 
-  const handlePianoTiles = (allTiles) => {
-    const newTiles=[]
-    for(let i=0;i<allTiles.length/4;i++){
-      for(let j=0;j<4;j++){
-        if(i%2==0)newTiles.push(allTiles[4*i+j]);
-        else newTiles.push(allTiles[4*i+3-j]);
-      }
-    }
-    console.log(newTiles);
-    setRows(newTiles)
+  const handleMouseEnter = (i) => {
+    handleTileClick(i);
+    setIndex(i);
   }
-
-  const handleTileClick = (index) => {
-    console.log("clicked")
-    socket.emit("TILE_CLICKED", index);
+  const handleMouseLeave = () => {
+    // socket.emit("TILE_CLICKED", i);
+    setIndex(null);
+  }
+  const handleTileClick = (i) => {
+    console.log("clicked", i)
+    socket.emit("TILE_CLICKED", i);
   }
 
   const handleGameFail = () => {
@@ -119,6 +120,13 @@ function App() {
       // if(hasGameStarted)return;
 
     };
+    const handlePianoTiles = (allTiles) => {
+      if (index != null) {
+        console.log("here")
+        handleTileClick(index)
+      }
+      setRows(allTiles)
+    }
 
     const handleScoreUpdate = (score) => {
       setScore(score);
@@ -135,28 +143,27 @@ function App() {
       });
     }
 
-
     const handleKeyPress = (event) => {
       switch (event.key) {
         case 'ArrowUp':
         case 's':
         case 'S':
-          handleTileClick(13);
+          handleTileClick((defaultRows - 1) * defaultColumns + 1);
           break;
         case 'ArrowDown':
         case 'k':
         case 'K':
-          handleTileClick(14);
+          handleTileClick((defaultRows) * defaultColumns - 2);
           break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          handleTileClick(12);
+          handleTileClick((defaultRows - 1) * defaultColumns);
           break;
         case 'ArrowRight':
         case 'l':
         case 'L':
-          handleTileClick(15);
+          handleTileClick((defaultRows) * defaultColumns - 1);
           break;
         default:
           // Do nothing for other keys
@@ -195,9 +202,16 @@ function App() {
         <h4>Lives: {lives}</h4>
         <h4>Score: {score}</h4>
       </div>
-      <div className="game grids">
-        {rows?.map((tile, index) => (
-          <div key={index} className='grid' style={{ backgroundColor: tile }} onClick={() => handleTileClick(index)} />
+      <div className="game grids" style={{
+        gridTemplateRows: `repeat(${defaultRows}, 1fr)`,
+        gridTemplateColumns: `repeat(${defaultColumns}, 1fr)`
+      }
+      }>
+        {rows?.map((tile, i) => (
+          <div key={i} className='grid' style={{ backgroundColor: tile.split(' ')[0] }}
+          // onMouseEnter={() => handleMouseEnter(i)}
+
+          />
         ))}
       </div>
     </div >

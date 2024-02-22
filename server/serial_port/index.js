@@ -2,7 +2,7 @@ import { SerialPort } from 'serialport';
 
 // port
 const port = new SerialPort({
-    path: 'COM1',
+    path: 'COM4',
     baudRate: 115200,
 });
 

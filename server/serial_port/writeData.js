@@ -38,19 +38,19 @@ export const writeData = (array) => {
 // Call the writeData function
 const colors = ['FE0000', '00FE00', '0000FE'];
 var iterator = 0;
-setInterval(() => {
-    const array = new Array(20).fill(colors[iterator]);
-    // array[iterator] = 'FE0000';
-    writeData(array);
-    // if (iterator === 19) {
-    //     iterator = 0;
-    // } else {
-    //     iterator += 1;
-    // }
+// setInterval(() => {
+//     const array = new Array(20).fill(colors[iterator]);
+//     // array[iterator] = 'FE0000';
+//     writeData(array);
+//     // if (iterator === 19) {
+//     //     iterator = 0;
+//     // } else {
+//     //     iterator += 1;
+//     // }
 
-    if(iterator === 2){
-        iterator = 0;
-    } else {
-        iterator ++;
-    }
-}, 1000);
+//     if(iterator === 2){
+//         iterator = 0;
+//     } else {
+//         iterator ++;
+//     }
+// }, 1000);

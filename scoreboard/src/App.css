@@ -89,9 +89,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 55vh;
+  height: 70vh;
   /* height: 55vh; */
-  width: 55vh;
+  width: 70vh;
   border-radius: 50%;
   background-color: #00000080;
   backdrop-filter: blur(3px);
@@ -100,7 +100,7 @@
 .ellipse {
   position: absolute;
   z-index: 3;
-  height: 55vh;
+  height: 70vh;
 }
 
 .score {
