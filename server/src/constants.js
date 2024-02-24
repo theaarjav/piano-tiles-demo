@@ -60,6 +60,6 @@ export const REALM_KEYS = {
 };
 
 
-export const rows=6;
-export const columns=4;
+export const rows=13;
+export const columns=7;
 export const players=2;

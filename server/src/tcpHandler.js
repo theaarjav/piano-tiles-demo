@@ -1,7 +1,8 @@
 // imports
 import net from 'net';
 // import { convertToHex, convertToSnake } from '../utils/shared.js';
-import { hardwareSendTiles  } from './getTiles.js';
+// import { hardwareSendTiles  } from './getTiles.js';
+import { hardwareSendTiles } from './shared.js';
 
 const TCP_IP = '192.168.0.7';
 const TCP_PORT = 23;

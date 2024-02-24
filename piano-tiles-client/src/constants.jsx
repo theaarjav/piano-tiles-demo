@@ -33,8 +33,8 @@ export const EVENT_TYPES = {
     TEAM_DETAILS:"teamDetails"
 };
 
-export const defaultRows = 6;
-export const defaultColumns = 4;
+export const defaultRows = 13;
+export const defaultColumns = 7;
 export const defaultSpeed = 100;
 export const defaultLevels = [];
 export const defaulSelectedLevel = 1;

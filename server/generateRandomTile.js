@@ -1,5 +1,5 @@
 import { columns, rows } from "./src/constants.js";
-import { getLives, getScore, setLives, setScore, setGameFail } from "./src/generateMidi.js";
+import { getLives, getScore, setLives, setScore, setGameFail } from "./generateMidi.js";
 import { tcp } from "./index.js";
 const players = 1;
 const allTiles = [];

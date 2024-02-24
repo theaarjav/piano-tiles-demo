@@ -13,11 +13,17 @@ function App() {
   // const [count, setCount] = useState(0)
   // const [gameFail, setGameFail] = useState(false)
   const [score, setScore] = useState(10)
+  const [scoresComp, setScoresComp] = useState([10, 10])
   const [audioWidth, setaudioWidth] = useState(40)
   const [addedScore, setAddedScore] = useState(null)
+  const [addedScoreLeft, setAddedScoreLeft] = useState(null)
+  const [addedScoreRight, setAddedScoreRight] = useState(null)
   const [addedScoreVisible, setAddedScoreVisible] = useState(false)
-  // const [fileUploaded, setFileUploaded] = useState(false)
+  const [addedScoreVisibleLeft, setAddedScoreVisibleLeft] = useState(false)
+  const [addedScoreVisibleRight, setAddedScoreVisibleRight] = useState(false)
+  const [mode, setMode] = useState("demo")
   const [lives, setLives] = useState(3)
+  const [livesComp, setLivesComp] = useState([3, 3])
   // const lives = 5;
   const handleGameFail = () => {
     setGameFail(true);
@@ -41,25 +47,55 @@ function App() {
     const handleLivesUpdate = (lives) => {
       setLives(lives);
     }
-    const handleAudioWidth=(width)=>{
+    const handleAudioWidth = (width) => {
       setaudioWidth(width);
     }
-    const handleAddedScore=(added)=>{
+    const handleAddedScore = (added) => {
       setAddedScore(added);
       setAddedScoreVisible(true)
       setTimeout(() => {
         setAddedScoreVisible(false);
       }, 500);
     }
-
+    const handleModeChange = (newMode) => {
+      console.log(newMode)
+      setMode(newMode);
+    }
+    const handleLivesUpdateComp=(compLives)=>{
+      console.log(compLives)
+      setLivesComp(compLives);
+    }
+    const handleScoreUpdateComp=(compScores)=>{
+      console.log(compScores)
+      setScoresComp(compScores);
+    }
+    const handleAddedScoreLeft=(addS)=>{
+      setAddedScoreLeft(addS);
+      setAddedScoreVisibleLeft(true)
+      setTimeout(() => {
+        setAddedScoreVisibleLeft(false);
+      }, 500);
+    }
+    const handleAddedScoreRight=(addS)=>{
+      setAddedScoreRight(addS);
+      setAddedScoreVisibleRight(true)
+      setTimeout(() => {
+        setAddedScoreVisibleRight(false);
+      }, 500);
+    }
     socket.on(EVENT_TYPES.CONNECT, onConnect);
     socket.on(EVENT_TYPES.DISCONNECT, onDisconnect);
     // socket.on("START_SONG", songStartHandler)
     socket.on("SCORE_UPDATE", handleScoreUpdate);
     socket.on("LIVES_UPDATE", handleLivesUpdate);
+    socket.on("SCORE_UPDATE_COMP", handleScoreUpdateComp);
+    socket.on("LIVES_UPDATE_COMP", handleLivesUpdateComp);
     socket.on("GAME_FAILED", handleGameFail)
     socket.on("SET_AUDIO_WIDTH", handleAudioWidth);
     socket.on("ADDED_SCORE", handleAddedScore);
+    socket.on("ADDED_SCORE_LEFT", handleAddedScoreLeft);
+    socket.on("ADDED_SCORE_RIGHT", handleAddedScoreRight);
+    socket.on("SCOREBOARD_MODE_CHANGE", handleModeChange)
     // socket.on("STOP_SONG", songStartHandler)
     return () => {
       socket.off(EVENT_TYPES.CONNECT, onConnect);
@@ -67,9 +103,14 @@ function App() {
       // socket.off("START_SONG", songStartHandler)
       socket.off("SCORE_UPDATE", handleScoreUpdate);
       socket.off("LIVES_UPDATE", handleLivesUpdate);
+      socket.on("SCORE_UPDATE_COMP", handleScoreUpdateComp);
+      socket.on("LIVES_UPDATE_COMP", handleLivesUpdateComp);
       socket.off("GAME_FAILED", handleGameFail)
       socket.off("SET_AUDIO_WIDTH", handleAudioWidth);
       socket.off("ADDED_SCORE", handleAddedScore);
+      socket.on("ADDED_SCORE_LEFT", handleAddedScoreLeft);
+      socket.on("ADDED_SCORE_RIGHT", handleAddedScoreRight);
+      socket.off("SCOREBOARD_MODE_CHANGE", handleModeChange)
       // socket.off("STOP_SONG", songStartHandler)
 
     }
@@ -77,7 +118,7 @@ function App() {
   return (
     <div>
       <video className='background' loop autoPlay muted>
-        <source src={background} type='Video/mp4'/>
+        <source src={background} type='Video/mp4' />
       </video>
       <div className='song-name-and-icon'>
         <div className="song-info">
@@ -95,7 +136,7 @@ function App() {
         </div>
         <div className="audio-timer">
 
-          <div className="audio-tracker" style={{width:`${audioWidth}%`}}>
+          <div className="audio-tracker" style={{ width: `${audioWidth}%` }}>
             <div className="time-circle">
 
             </div>
@@ -105,26 +146,26 @@ function App() {
           </div>
         </div>
       </div>
-      <div className="scoreboard">
 
+      {mode == "classic" ?
+        <div className="scoreboard">
+          <div className="container ellipse-items">
+            <img src={ellipse} className='ellipse' />
+            <div className="score">
+              <div className='text'>
+                SCORE
+              </div>
+              <div className='curr'>
+                {score}
+              </div>
+              <div className={`added  ${addedScoreVisible ? 'visible' : 'fade-out'}`} style={{
+                color: addedScore > 0 ? '#00ff0a' : '#ff000a'
+              }}>
+                {addedScore > 0 ? '+ ' + addedScore : addedScore}
+              </div>
 
-        <div className="container ellipse-items">
-          <img src={ellipse} className='ellipse' />
-          <div className="score">
-            <div className='text'>
-              SCORE
             </div>
-            <div className='curr'>
-              {score}
-            </div>
-            <div className={`added  ${addedScoreVisible ? 'visible' : 'fade-out'}`} style={{
-              color:addedScore>0?'#00ff0a':'#ff000a'
-            }}>
-              {addedScore>0?'+ '+ addedScore: addedScore}
-            </div>
-
-          </div>
-          {/* <div className="song">
+            {/* <div className="song">
 
             <div className="file-upload" id="upload" onDragOver="event.preventDefault()">
               <h1>
@@ -140,22 +181,132 @@ function App() {
             </div>
             
           </div> */}
-        </div>
-        <div className="livesLeftContainer">
-          <div className="lives-left-image">
-            {Array.from({ length: 5 }, (_, index) => index + 1).map((i) => {
-              return <span key={i} className={i > lives ? "lives-lost" : "lives-left"}>
-
-                <img src={i > lives ? headphonesLost : headphones} className={i > lives ? 'livesLostImage' : 'livesLeftImage'} />
-              </span>;
-            })}
           </div>
-          <span className='lives-text'>
-            LIVES
-          </span>
+          <div className="livesLeftContainer" style={{
+            top:'2vh'
+          }}>
+            <div className="lives-left-image">
+              {Array.from({ length: 5 }, (_, index) => index + 1).map((i) => {
+                return <span key={i} className={i > lives ? "lives-lost" : "lives-left"}>
+
+                  <img src={i > lives ? headphonesLost : headphones} className={i > lives ? 'livesLostImage' : 'livesLeftImage'} />
+                </span>;
+              })}
+            </div>
+            <span className='lives-text'>
+              LIVES
+            </span>
+          </div>
         </div>
 
-      </div>
+        : mode == "competition" ?
+          <div className="scoreboard-comp">
+
+            <div className='scoreboard' style={{
+              width:"50vw",
+              justifyContent:'space-around'
+            }}>
+              <div className="container ellipse-items" style={{
+              top:"8vh",
+              height:"55vh",
+              width:"55vh"
+            }}>
+                <img src={ellipse} className='ellipse' />
+                <div className="score">
+                  <div className='text'>
+                    SCORE
+                  </div>
+                  <div className='curr' style={{
+                    fontSize:'15vh',
+                    lineHeight:'20vh'
+                  }}>
+                    {scoresComp[0]}
+                  </div>
+                  <div className={`added  ${addedScoreVisibleLeft ? 'visible' : 'fade-out'}`} style={{
+                    color: addedScoreLeft > 0 ? '#00ff0a' : '#ff000a'
+                  }}>
+                    {addedScoreLeft > 0 ? '+ ' + addedScoreLeft : addedScoreLeft}
+                  </div>
+
+                </div>
+
+              </div>
+              <div className="livesLeftContainer" style={{
+                top:'2vh'
+              }}>
+                <div className="lives-left-image">
+                  {Array.from({ length: 5 }, (_, index) => index + 1).map((i) => {
+                    return <span key={i} className={i > lives ? "lives-lost" : "lives-left"}>
+
+                      <img src={i > livesComp[0] ? headphonesLost : headphones} className={i > livesComp[0] ? 'livesLostImage' : 'livesLeftImage'} />
+                    </span>;
+                  })}
+                </div>
+                <span className='lives-text'>
+                  LIVES
+                </span>
+              </div>
+            </div>
+            <div className='scoreboard' style={{
+              width:"50vw",
+              justifyContent:'space-around'
+            }}>
+              <div className="container ellipse-items" style={{
+              top:"8vh",
+              height:"55vh",
+              width:"55vh"
+            }}>
+                <img src={ellipse} className='ellipse' />
+                <div className="score">
+                  <div className='text'>
+                    SCORE
+                  </div>
+                  <div className='curr'
+                  style={{
+                    fontSize:'15vh',
+                    lineHeight:'20vh'
+                  }}>
+                    {scoresComp[1]}
+                  </div>
+                  <div className={`added  ${addedScoreVisibleRight ? 'visible' : 'fade-out'}`} style={{
+                    color: addedScoreRight > 0 ? '#00ff0a' : '#ff000a'
+                  }}>
+                    {addedScoreRight > 0 ? '+ ' + addedScoreRight : addedScoreRight}
+                  </div>
+
+                </div>
+
+              </div>
+              <div className="livesLeftContainer">
+                <div className="lives-left-image">
+                  {Array.from({ length: 5 }, (_, index) => index + 1).map((i) => {
+                    return <span key={i} className={i > lives ? "lives-lost" : "lives-left"}>
+
+                      <img src={i > livesComp[1] ? headphonesLost : headphones} className={i > livesComp[1] ? 'livesLostImage' : 'livesLeftImage'} />
+                    </span>;
+                  })}
+                </div>
+                <span className='lives-text'>
+                  LIVES
+                </span>
+              </div>
+            </div>
+          </div>
+          :
+          <div className='scoreboard'>
+            <div className="container ellipse-items">
+              <img src={ellipse} className='ellipse' />
+              <div className="score">
+                <div className='text'>
+                  DEMO MODE
+                </div>
+              </div>
+            </div>
+          </div>
+
+      }
+
+
     </div>
   )
 }

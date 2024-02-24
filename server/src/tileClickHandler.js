@@ -1,12 +1,23 @@
-import { getGameOn, getTileChecked, setTileChecked, allTiles, midCol, prev, playerCols } from "./getTiles.js";
+import { getGameOn, getTileChecked, setTileChecked, allTiles, midCol, prev, playerCols, backToPrev, setGameOn } from "./getTiles.js";
 import { columns, rows } from "./constants.js";
-import { getLives, getScore, setLives, setScore, setGameFail } from "./generateMidi.js";
+import { getLives, getScore, setLives, setScore, setGameFail, printNotes } from "../generateMidi.js";
 import { tcp } from "../index.js";
+import { initNotes } from "./shared.js";
+// import { setGameOn } from "./competition.js";
 let players=1;
 export const handleTileClick = (io, index, e) => {
     let gameOn=getGameOn();
-    if(!gameOn)return;
-
+    if(!gameOn){
+        console.log("here");
+        if(initNotes[index]=='#00ff00'){
+            initNotes[index]='#00ff00 checked'
+            console.log("yes");
+            setGameOn(true);
+            printNotes(io);
+        }
+        return;
+    }
+    // console.log(index);
     const endTime = new Date().getTime()
     // const elapsedTime = endTime - startTime;
     if (e == "tap") {
@@ -115,15 +126,17 @@ export const handleTileClick = (io, index, e) => {
 
                 allTiles[index] = '#00ff0a'
                 const sendTiles = [];
-                for (let i = 0; i < (rows - 2) * columns; i++)sendTiles.push(allTiles[i]);
-                for (let i = (rows - 2) * columns, j = 0; i < (rows) * columns; i++) {
-                    if (j%columns>=midCol-players && j%columns<=midCol+players-1) {
+                for (let i = 0; i < (rows - 2) * columns; i++){
+                    if(i%columns<midCol-players || i%columns>midCol+players-1)sendTiles.push('#ffff00')
+                    else sendTiles.push(allTiles[i]);
+                }
+                for (let i = (rows - 2) * columns; i < (rows) * columns; i++) {
+                    if(i%columns<midCol-players || i%columns>midCol+players-1)sendTiles.push('#ffff00')
+                    else {
                         if (allTiles[i].split(' ')[0] == '#ffffff') sendTiles.push('#aaaaff');
                         else if (allTiles[i] == '#00ff0a') sendTiles.push('#00ffaa')
                         else sendTiles.push('#000033');
-                    }
-                    else sendTiles.push(allTiles[i]);
-                    j++
+                    }                    
                 }
                 // sendTiles[index]='#00ff0a'
                 let score = getScore();
@@ -155,20 +168,27 @@ export const handleTileClick = (io, index, e) => {
             let sendTiles = [];
             
             for (let i = 0; i < (rows - 2) * columns; i++) {
-                sendTiles.push(allTiles[i]);
+                if(i%columns<midCol-players || i%columns>midCol+players-1){
+                    allTiles[i]='#ff0000'
+                } sendTiles.push(allTiles[i]);
             }
-            for (let i = (rows - 2) * columns, j = 0; i < (rows) * columns; i++) {
-                if (j%columns>=midCol-players && j%columns<=midCol+players-1) {
+            for (let i = (rows - 2) * columns; i < (rows) * columns; i++) {
+                if(i%columns<midCol-players || i%columns>midCol+players-1){
+                    allTiles[i]='#ff0000';
+                    sendTiles.push(allTiles[i]);
+                }
+                else {
                     if (allTiles[i].split(' ')[0] == '#ffffff') sendTiles.push('#aaaaff');
                     else if (allTiles[i] == '#00ff0a') sendTiles.push('#00ffaa')
                     else sendTiles.push('#000033');
                 }
-                else sendTiles.push(allTiles[i]);
-                j++
             }
             sendTiles[index] = '#ff0000'
             tcp.sendControlData(sendTiles, rows, columns)
             io.emit("PIANO_TILES", sendTiles);
+            setTimeout(() => {
+                backToPrev();
+            }, 300);
         }
     }
     else if (e == "hold") {
@@ -179,14 +199,17 @@ export const handleTileClick = (io, index, e) => {
             io.emit("SCORE_UPDATE", getScore());
             io.emit("ADDED_SCORE", 10)
             const sendTiles = [];
-            for (let i = 0; i < (rows - 2) * columns; i++)sendTiles.push(allTiles[i]);
+            for (let i = 0; i < (rows - 2) * columns; i++){
+                if(i%columns<midCol-players || i%columns>midCol+players-1)sendTiles.push('#ffff00')
+                else sendTiles.push(allTiles[i]);
+            }
             for (let i = (rows - 2) * columns, j = 0; i < (rows) * columns; i++) {
-                if (j%columns >=midCol-players && j%columns<=midCol+players-1) {
+                if(i%columns<midCol-players || i%columns>midCol+players-1)sendTiles.push('#ffff00')
+                else {
                     if (allTiles[i].split(' ')[0] == '#ffffff') sendTiles.push('#aaaaff');
                     else if (allTiles[i] == '#00ff0a') sendTiles.push('#00ffaa')
                     else sendTiles.push('#000033');
                 }
-                else sendTiles.push(allTiles[i]);
                 j++
             }
             // for (let i = (rows - 1) * columns; i < rows * columns; i++) {
@@ -204,12 +227,13 @@ export const handleTileClick = (io, index, e) => {
             const sendTiles = [];
             for (let i = 0; i < (rows - 2) * columns; i++)sendTiles.push(allTiles[i]);
             for (let i = (rows - 2) * columns, j = 0; i < (rows) * columns; i++) {
-                if (j%columns>=midCol-players && j%columns<=midCol+players-1) {
+                if(i%columns<midCol-players || i%columns>midCol+players-1)sendTiles.push('#ffff00')
+                else {
                     if (allTiles[i].split(' ')[0] == '#ffffff') sendTiles.push('#aaaaff');
                     else if (allTiles[i] == '#00ff0a') sendTiles.push('#00ffaa')
                     else sendTiles.push('#000033');
                 }
-                else sendTiles.push(allTiles[i]);
+                
                 j++
             }
 

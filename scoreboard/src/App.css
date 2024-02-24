@@ -8,6 +8,9 @@
   color: aliceblue;
   font-family: 'rajdhani'
 }
+.scoreboard-comp{
+  display: flex;
+}
 
 .background {
   position: absolute;

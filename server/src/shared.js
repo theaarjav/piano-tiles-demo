@@ -1,6 +1,10 @@
+import { rows, columns } from "./constants.js";
+// import { midCol } from "./getTiles.js";
+const midCol=3;
+const players=1;
 export const hardwareSendTiles = (serialArr, rows, columns) => {
     const snakedArr = [];
-    // console.log(serialArr)
+    console.log(serialArr.length)
     for (let i = 0; i < rows; i++) {
         // For even rows, push elements in normal order
         if (i % 2 === 0) {
@@ -33,11 +37,15 @@ export const getHexColors = (colors) => {
 
 export var initNotes;
 initNotes = [];
-for (let i = 0; i < rows - 2; i++) {
-    for (let j = 0; j < columns; j++)initNotes.push("#000000");
+for (let i = 0; i < (rows - 2)*columns; i++) {
+    
+        if(i%columns<midCol-players || i%columns>midCol+players-1)initNotes.push('#ffff00')
+        else initNotes.push("#000000");
+    
 }
-for (let i = 0, j = 0; i < 2*columns; i++) {
-    if (j%columns>=midCol-players && j%columns<=midCol+players-1) initNotes.push("#000033");
-    else initNotes.push("#000000");
-    j++;
+for (let i = (rows-2)*columns; i < rows*columns; i++) {
+    if (i%columns>=midCol-players && i%columns<=midCol+players-1) initNotes.push("#000033");
+    else initNotes.push("#ffff00");
+    // j++;
 }
+initNotes[(rows-2)*columns+parseInt(columns/2)]='#00ff00';
