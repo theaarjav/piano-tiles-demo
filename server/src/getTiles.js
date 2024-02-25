@@ -19,6 +19,7 @@ export const backToPrev=()=>{
         }
     }
 }
+// export const resetTiles=
 export const midCol=parseInt(columns/2);
 var startTime = 0;
 let gameOn = false;

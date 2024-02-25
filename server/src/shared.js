@@ -4,7 +4,7 @@ const midCol=3;
 const players=1;
 export const hardwareSendTiles = (serialArr, rows, columns) => {
     const snakedArr = [];
-    console.log(serialArr.length)
+    // console.log(serialArr.length)
     for (let i = 0; i < rows; i++) {
         // For even rows, push elements in normal order
         if (i % 2 === 0) {

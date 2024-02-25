@@ -14,7 +14,8 @@ import buffer from './assets/buffer.wav';
 import JaiJaiShivShankar from './assets/Jai_Jai_Shiv_Shankar.mp3';
 import DevaDeva from './assets/Deva_Deva.mp3';
 import chhogada from './assets/chhogada2.mp3'
-import starboy from './assets/starboy_louder.mp3'
+import starboy2 from './assets/starboy_louder.mp3'
+import starboy from './assets/starboy_final.mp3'
 import jamal_kudu from './assets/jamal_kudu_new.mp3'
 import saki_saki from './assets/saki_saki.mp3'
 import { defaultRows, defaultColumns } from './constants.jsx'
@@ -22,12 +23,13 @@ import { defaultRows, defaultColumns } from './constants.jsx'
 
 
 let song = "Jamal Kudu"
+// const [mode, setMode] = useState("demo");
+let mode="demo";
 function App() {
   const [nxtRow, setNxtRow] = useState(0)  // let score = 0;
   const [notes, setNotes] = useState({});
   const [scores, setScores] = useState([0, 0]);
   const [lives, setLives] = useState([5, 5]);
-  const [mode, setMode] = useState("demo");
   // const [song, setSong] = useState("Jamal Kudu");
   const [index, setIndex] = useState(null);
 
@@ -127,7 +129,8 @@ function App() {
   }
   const modeChangeHandler = (e) => {
     // console.log(e.target.value);
-    setMode(e.target.value)
+    // setMode(e.target.value)
+    mode=e.target.value;
     socket.emit("MODE_CHANGE", e.target.value)
   }
   const handleGameFail = () => {
@@ -163,10 +166,10 @@ function App() {
     song = e.target.value;
     socket.emit("SELECT_SONG", e.target.value);
   }
-  const handleAudioEnded = () => {
+  const handleAudioEnded = (song) => {
     setTimeout(() => {
       socket.emit("AUDIO_ENDED");
-    }, 2000);
+    }, 3000);
   }
   useEffect(() => {
     socket.emit("MODE_CHANGE", mode)
@@ -290,17 +293,17 @@ function App() {
         }
       }
     }
-    if (song == "Sunflower") {
-      sf.addEventListener("ended", handleAudioEnded)
-    } else if (song == "Saki Saki") {
-      saki.addEventListener("ended", handleAudioEnded)
-    } else if (song == "Chhogada") {
-      chh.addEventListener("ended", handleAudioEnded)
-    } else if (song == "Starboy") {
-      star.addEventListener("ended", handleAudioEnded)
-    } else {
-      jamal.addEventListener("ended", handleAudioEnded)
-    }
+    // if (song == "Sunflower") {
+      sf.addEventListener("ended", ()=>handleAudioEnded(sf))
+    // } else if (song == "Saki Saki") {
+      saki.addEventListener("ended", ()=>handleAudioEnded(saki))
+    // } else if (song == "Chhogada") {
+      chh.addEventListener("ended", ()=>handleAudioEnded(chh))
+    // } else if (song == "Starboy") {
+      star.addEventListener("ended", ()=>handleAudioEnded(star))
+    // } else {
+      jamal.addEventListener("ended", ()=>handleAudioEnded(jamal))
+    // }
     document.addEventListener('keydown', handleKeyPress);
     socket.on(EVENT_TYPES.CONNECT, onConnect);
     socket.on("PIANO_KEY", handlePianoKey);
