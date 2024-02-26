@@ -81,8 +81,8 @@ function organizeNotes(notesData, tileInterval) {
 
 // Call the function and get the result
 // let song=getSong();
-let tileInterval = intervals["Starboy"];
-let result = songSelect["Starboy"];
+let tileInterval = intervals["Jamal Kudu"];
+let result = songSelect["Jamal Kudu"];
 let currentIndex = 0;
 let keysArray = Object.keys(result);
 let currTime = parseFloat(keysArray[0]);

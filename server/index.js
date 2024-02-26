@@ -224,9 +224,10 @@ io.on(EVENT_TYPES.CONNECTION, (socket) => {
     );
     socket.on("SELECT_SONG", (selectedSong)=>{
         // setSong(selectedSong)
-        setResultAndInterval({res:songSelect[selectedSong], int:intervals[selectedSong]});
-        song=selectedSong;
         console.log(selectedSong);
+        io.emit("SCOREBOARD_SONG_CHANGE", selectedSong);
+        song=selectedSong;
+        setResultAndInterval({res:songSelect[selectedSong], int:intervals[selectedSong]});
     })
 });
 
