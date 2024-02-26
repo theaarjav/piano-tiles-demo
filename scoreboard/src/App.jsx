@@ -5,7 +5,11 @@ import headphones from './assets/Headphones.svg'
 import headphonesLost from './assets/headphonesLivesLost.svg'
 import background from './assets/backgrounds/2.mp4'
 import song_bar from './assets/song_bar.svg'
-import song_poster from './assets/songPosters/sunflower.jpg'
+import sunflower from './assets/songPosters/sunflower.jpg'
+import starboy from './assets/songPosters/starboy.jpg'
+import jamal_kudu from './assets/songPosters/jamal_kudu.webp'
+import saki_saki from './assets/songPosters/saki_saki.png'
+import chhogada from './assets/songPosters/chhogada.jpg'
 import { EVENT_TYPES } from './constants'
 import socket from './socket'
 import './App.css'
@@ -24,6 +28,11 @@ function App() {
   const [mode, setMode] = useState("demo")
   const [lives, setLives] = useState(3)
   const [livesComp, setLivesComp] = useState([3, 3])
+  const [songInfo, setSongInfo] = useState({
+    "img":jamal_kudu,
+    "songName":"Jamal Kudu",
+    "singer":"Harshavardhan Rameshwar"
+  })
   // const lives = 5;
   const handleGameFail = () => {
     setGameFail(true);
@@ -83,6 +92,40 @@ function App() {
         setAddedScoreVisibleRight(false);
       }, 500);
     }
+
+    const handleSongChange=(song)=>{
+      if(song=="Sunflower"){
+        setSongInfo({
+          "img":sunflower,
+          "songName":"Sunflower",
+          "singer":"Post Malone"
+        })
+      }else if(song=="Starboy"){
+        setSongInfo({
+          "img":starboy,
+          "songName":"Starboy",
+          "singer":"Weeknd"
+        })
+      }else if(song=="Chhogada"){
+        setSongInfo({
+          "img":chhogada,
+          "songName":"Chhogada",
+          "singer":"Darshan Rawal"
+        })
+      }else if(song=="Saki Saki"){
+        setSongInfo({
+          "img":saki_saki,
+          "songName":"Saki Saki",
+          "singer":"Neha Kakkar"
+        })
+      }else{
+        setSongInfo({
+          "img":jamal_kudu,
+          "songName":"Jamal Kudu",
+          "singer":"Harshavardhan Rameshwar"
+        })
+      }
+    }
     socket.on(EVENT_TYPES.CONNECT, onConnect);
     socket.on(EVENT_TYPES.DISCONNECT, onDisconnect);
     // socket.on("START_SONG", songStartHandler)
@@ -96,6 +139,7 @@ function App() {
     socket.on("ADDED_SCORE_LEFT", handleAddedScoreLeft);
     socket.on("ADDED_SCORE_RIGHT", handleAddedScoreRight);
     socket.on("SCOREBOARD_MODE_CHANGE", handleModeChange)
+    socket.on("SCOREBOARD_SONG_CHANGE", handleSongChange)
     // socket.on("STOP_SONG", songStartHandler)
     return () => {
       socket.off(EVENT_TYPES.CONNECT, onConnect);
@@ -111,6 +155,7 @@ function App() {
       socket.on("ADDED_SCORE_LEFT", handleAddedScoreLeft);
       socket.on("ADDED_SCORE_RIGHT", handleAddedScoreRight);
       socket.off("SCOREBOARD_MODE_CHANGE", handleModeChange)
+      socket.off("SCOREBOARD_SONG_CHANGE", handleSongChange)
       // socket.off("STOP_SONG", songStartHandler)
 
     }
@@ -124,13 +169,13 @@ function App() {
         <div className="song-info">
 
           <img src={song_bar} className='song-icon' />
-          <img src={song_poster} className='song-poster' />
+          <img src={songInfo.img} className='song-poster' />
           <div className="song-name">
             <p className="heading">
-              Sunflower
+              {songInfo.songName}
             </p>
             <p className="author">
-              Post Malone
+              {songInfo.singer}
             </p>
           </div>
         </div>
@@ -236,7 +281,7 @@ function App() {
               }}>
                 <div className="lives-left-image">
                   {Array.from({ length: 5 }, (_, index) => index + 1).map((i) => {
-                    return <span key={i} className={i > lives ? "lives-lost" : "lives-left"}>
+                    return <span key={i} className={i > livesComp[0] ? "lives-lost" : "lives-left"}>
 
                       <img src={i > livesComp[0] ? headphonesLost : headphones} className={i > livesComp[0] ? 'livesLostImage' : 'livesLeftImage'} />
                     </span>;
@@ -280,7 +325,7 @@ function App() {
               <div className="livesLeftContainer">
                 <div className="lives-left-image">
                   {Array.from({ length: 5 }, (_, index) => index + 1).map((i) => {
-                    return <span key={i} className={i > lives ? "lives-lost" : "lives-left"}>
+                    return <span key={i} className={i > livesComp[1] ? "lives-lost" : "lives-left"}>
 
                       <img src={i > livesComp[1] ? headphonesLost : headphones} className={i > livesComp[1] ? 'livesLostImage' : 'livesLeftImage'} />
                     </span>;
